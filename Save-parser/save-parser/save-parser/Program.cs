@@ -8,6 +8,18 @@ using System.Buffers.Binary;
 using CommandLine;
 using Newtonsoft.Json;
 
+class BinaryReader2 : BinaryReader
+{
+    public BinaryReader2(System.IO.Stream stream) : base(stream) { }
+
+    public override Int16 ReadInt16()
+    {
+        var data = base.ReadBytes(2);
+        Array.Reverse(data);
+        return BitConverter.ToInt16(data, 0);
+    }
+}
+
 class Program
 {
     public class Options
@@ -30,18 +42,9 @@ class Program
         public string officerName { get; set; }
         //public int officerId { get; set; }
         public int officerLevel { get; set; }
-        public string officerTitle { get; set; }
-        public int officerKills { get; set; }
-        public int officerXP { get; set; }
         public int costume { get; set; }
         public Weapon weapon1 { get; set; }
-        public Weapon weapon2 { get; set; }
-        public Weapon weapon3 { get; set; }
-        public Weapon weapon4 { get; set; }
-        public Weapon weapon5 { get; set; }
-        public Weapon weapon6 { get; set; }
-        public Weapon weapon7 { get; set; }
-        public Weapon weapon8 { get; set; }
+
     }
 
 
@@ -115,162 +118,6 @@ class Program
                     {38, "Zhen Ji"},
                     {39, "Xiao Qiao"},
                     {40, "Yue Ying"}
-                };
-                var titleMap = new Dictionary<int, string>()
-                {
-                    {0, "Lt. General" },
-                    {1, "Assisstant General" },
-                    {2, "Field General" },
-                    {3, "Gate General" },
-                    {4, "4th Foot General" },
-                    {5, "3rd Foot General" },
-                    {6, "Lt. Foot General" },
-                    {7, "Foot General" },
-                    {8, "4th Crusher General" },
-                    {9, "3rd Crusher General" },
-                    {10, "Lt. Crusher General" },
-                    {11, "Crusher General" },
-                    {12, "4th Guard General" },
-                    {13, "3rd Guard General" },
-                    {14, "Lt. Guard General" },
-                    {15, "Guard General" },
-                    {16, "Winged General" },
-                    {17, "Flying General" },
-                    {18, "Lt. Support General" },
-                    {19, "Support General" },
-                    {20, "4th Order General" },
-                    {21, "3rd Order General" },
-                    {22, "Lt. Order General" },
-                    {23, "Order General" },
-                    {24, "4th Slashing General" },
-                    {25, "3rd Slashing General" },
-                    {26, "Lt. Slashing General" },
-                    {27, "Slashing General" },
-                    {28, "4th Pacifying General" },
-                    {29, "3rd Pacifying General" },
-                    {30, "Lt. Pacifying General" },
-                    {31, "Pacifying General" },
-                    {32, "4th Pike General" },
-                    {33, "3rd Pike General" },
-                    {34, "Pike General" },
-                    {35, "4th Dignified General" },
-                    {36, "3rd Dignified General" },
-                    {37, "Lt. Dignified General" },
-                    {38, "Dignified General" },
-                    {39, "4th Dispatch General" },
-                    {40, "3rd Dispatch General" },
-                    {41, "Lt. Dispatch General" },
-                    {42, "Dispatch General" },
-                    {43, "4th Cohort General" },
-                    {44, "3rd Cohort General" },
-                    {45, "Lt. Cohort General" },
-                    {46, "Cohort General" },
-                    {47, "Commander General" },
-                    {48, "Restoring General" },
-                    {49, "4th Justice General" },
-                    {50, "3rd Justice General" },
-                    {51, "Tower General" },
-                    {52, "River General" },
-                    {53, "Sea General" },
-                    {54, "Plains General" },
-                    {55, "Lt. Justice General" },
-                    {56, "Justice General" },
-                    {57, "Lt. Moral General" },
-                    {58, "Moral General" },
-                    {59, "4th Loyal General" },
-                    {60, "3rd Loyal General" },
-                    {61, "Lt. Loyal General" },
-                    {62, "Loyal General" },
-                    {63, "4th Trusted General" },
-                    {64, "3rd Trusted General" },
-                    {65, "Lt. Trusted General" },
-                    {66, "Trusted General" },
-                    {67, "4th Spear General" },
-                    {68, "3rd Spear General" },
-                    {69, "Lt. Spear General" },
-                    {70, "Spear General" },
-                    {71, "4th Resolute General" },
-                    {72, "3rd Resolute General" },
-                    {73, "3rd Resolute General" },
-                    {74, "Lt. Resolute General" },
-                    {75, "Resolute General" },
-                    {76, "4th Enchanter General" },
-                    {77, "3rd Enchanter General" },
-                    {78, "Lt. Enchanter General" },
-                    {79, "Enchanter General" },
-                    {80, "4th Assault General" },
-                    {81, "3rd Assault General" },
-                    {82, "Lt. Assault General" },
-                    {83, "Assault General" },
-                    {84, "4th Tiger General" },
-                    {85, "3rd Tiger General" },
-                    {86, "Lt. Tiger General" },
-                    {87, "Tiger General" },
-                    {88, "Negotiator General" },
-                    {89, "Generous General" },
-                    {90, "Right Flank General" },
-                    {91, "Ambush General" },
-                    {92, "Archer General" },
-                    {93, "Lt. Crossbow General" },
-                    {94, "Left Flank General" },
-                    {95, "Lt. Rank General" },
-                    {96, "Rank General" },
-                    {97, "Lt. File General" },
-                    {98, "File General" },
-                    {99, "Lt. Horse General" },
-                    {100, "Horse General" },
-                    {101, "Lt. Banner General" },
-                    {102, "Banner General" },
-                    {103, "Lt. Lance General" },
-                    {104, "Lance General" },
-                    {105, "Sword General" },
-                    {106, "Guardian General" },
-                    {107, "Crane General" },
-                    {108, "Stallion General" },
-                    {109, "Garrison General" },
-                    {110, "Escort General" },
-                    {111, "Coommandant General" },
-                    {112, "Warden General" },
-                    {113, "Distinguished General" },
-                    {114, "Capital General" },
-                    {115, "Tiger's Fangs General" },
-                    {116, "Rising Dragon General" },
-                    {117, "4th Tranquil General" },
-                    {118, "3rd Tranquil General" },
-                    {119, "Lt. Tranquil General" },
-                    {120, "Tranquil General" },
-                    {121, "Peacemaker General" },
-                    {122, "Peacekeeper General" },
-                    {123, "Crown General" },
-                    {124, "4th Elite General" },
-                    {125, "3rd Elite General" },
-                    {126, "Elite General" },
-                    {127, "Master General" },
-                    {128, "Rear General" },
-                    {129, "Front General" },
-                    {130, "General of the Right" },
-                    {131, "General of the Left" },
-                    {132, "4th North General" },
-                    {133, "4th West General" },
-                    {134, "4th South General" },
-                    {135, "4th East General" },
-                    {136, "3rd North General" },
-                    {137, "3rd West General" },
-                    {138, "3rd South General" },
-                    {139, "3rd East General" },
-                    {140, "Lt. North General" },
-                    {141, "Lt. West General" },
-                    {142, "Lt. South General" },
-                    {143, "Lt. East General" },
-                    {144, "North General" },
-                    {145, "West General" },
-                    {146, "South General" },
-                    {147, "East General" },
-                    {148, "Perimeter General" },
-                    {149, "Chariot General" },
-                    {150, "Cavalier General" },
-                    {151, "Grand General" },
-                    {152, "Lord General" },
                 };
                 var weaponsDict = new Dictionary<int, string>()
                 {
@@ -399,205 +246,45 @@ class Program
                     { 122, "Emerald Mist"},
                     { 174, "Empty" }
                 };
-                var weaponElementMap = new Dictionary<int, string>()
-                {
-                    {0, "Fire"},
-                    {1, "Ice" },
-                    {2, "Lightning" },
-                    {3, "Standard" }
-                };
 
-                var DWOfficerDictionary = new Dictionary<string, DWOfficer>();
-
+                var fighterDictionary = new Dictionary<string, DWOfficer>();
                 
-                using (BinaryReader reader = new BinaryReader(new FileStream(file, FileMode.Open)))
+                using (BinaryReader2 reader = new BinaryReader2(new FileStream(file, FileMode.Open)))
                 {
-                    int xpBaseStart = 3052;
-                    int idBaseStart = 3036;
-                    int killsBaseStart = 3056;
-                    int costumeBaseStart = 3040;
-                    int titleBaseStart = 3044;
-                    int levelBaseStart = 3048;
-                    int weapon1BaseStart = 2908;
-                    int weapon2BaseStart = 2924;
-                    int weapon3BaseStart = 2940;
-                    int weapon4BaseStart = 2956;
-                    int weapon5BaseStart = 2972;
-                    int weapon6BaseStart = 2988;
-                    int weapon7BaseStart = 3004;
-                    int weapon8BaseStart = 3020;
+                    // real address in 010 editor minus 4
+                    int emblemAddress = 269234;
+
+
+
 
                     int readerBuffer;
 
-                    for (int i = 0; i < 6888; i++)
-                    {
 
-                        // create new item in dwofficerdictionary on each loop
-                        // and new dwofficer 
-                        DWOfficerDictionary.Add("DWOfficer" + i, new DWOfficer());
+                    // create new item in dwofficerdictionary on each loop
+                    // and new dwofficer 
+                    //fighterDictionary.Add("fighter" + i, new DWOfficer());
 
 
-                        Console.WriteLine("*********");
-
-                        reader.BaseStream.Seek(idBaseStart + i, SeekOrigin.Begin);
-                        reader.Read(test, 0, 4);
-                        DWOfficerDictionary["DWOfficer" + i].officerName = officersDict[reader.ReadInt32()];
-                        //DWOfficerDictionary["DWOfficer" + i].officerId = reader.ReadInt32();
-                        //Console.WriteLine("officer: " + officersDict[reader.ReadInt32()]);
-
-
-                        reader.BaseStream.Seek(levelBaseStart + i, SeekOrigin.Begin);
-                        reader.Read(test, 0, 4);
-                        //Console.WriteLine("level: " + reader.ReadInt32());
-                        DWOfficerDictionary["DWOfficer" + i].officerLevel = reader.ReadInt32();
-
-                        reader.BaseStream.Seek(xpBaseStart + i, SeekOrigin.Begin);
-                        reader.Read(test, 0, 4);
-                        //Console.WriteLine("xp: " + reader.ReadInt32());
-                        DWOfficerDictionary["DWOfficer" + i].officerXP = reader.ReadInt32();
-
-                        reader.BaseStream.Seek(killsBaseStart + i, SeekOrigin.Begin);
-                        reader.Read(test, 0, 4);
-                        //Console.WriteLine("kills: " + reader.ReadInt32());
-                        DWOfficerDictionary["DWOfficer" + i].officerKills = reader.ReadInt32();
-
-                        reader.BaseStream.Seek(titleBaseStart + i, SeekOrigin.Begin);
-                        reader.Read(test, 0, 4);
-                        //Console.WriteLine("title: " + reader.ReadInt32());
-                        DWOfficerDictionary["DWOfficer" + i].officerTitle = titleMap[reader.ReadInt32()];
-
-                        reader.BaseStream.Seek(costumeBaseStart + i, SeekOrigin.Begin);
-                        reader.Read(test, 0, 4);
-                        DWOfficerDictionary["DWOfficer" + i].costume = reader.ReadInt32();
-                        //Console.WriteLine("costume: " + reader.ReadInt32());
-
-                        reader.BaseStream.Seek(weapon1BaseStart + i, SeekOrigin.Begin);
-                        reader.Read(test, 0, 4);
-                        // use temporary variable that holds reader.readerint32 because calling reader causes the 
-                        // buffer to move forward, so ONLY CALL THIS ONCE PER DATA TO CALL
-                        readerBuffer = reader.ReadInt32();
-                        DWOfficerDictionary["DWOfficer" + i].weapon1 = new Weapon {
-                            weaponName = weaponsDict[readerBuffer],
-                            weaponId = readerBuffer,
-                            // ok to call reader.readint on these, i do want the reader to move forward to read next bytes
-                            weaponDamageOffset = reader.ReadInt32(),
-                            weaponElement = weaponElementMap[reader.ReadInt32()],
-                            weaponSkills = reader.ReadInt32()
-                        };
-
-
-                        reader.BaseStream.Seek(weapon2BaseStart + i, SeekOrigin.Begin);
-                        reader.Read(test, 0, 4);
-                        readerBuffer = reader.ReadInt32();
-                        DWOfficerDictionary["DWOfficer" + i].weapon2 = new Weapon
-                        {
-                            weaponName = weaponsDict[readerBuffer],
-                            weaponId = readerBuffer,
-                            weaponDamageOffset = reader.ReadInt32(),
-                            weaponElement = weaponElementMap[reader.ReadInt32()],
-                            weaponSkills = reader.ReadInt32()
-                        };
-                        //DWOfficerDictionary["DWOfficer" + i].weapon2.weaponName = weaponsDict[reader.ReadInt32()];
-                        //Console.WriteLine("weapon 2: " + weaponsDict[reader.ReadInt32()]);
-
-                        reader.BaseStream.Seek(weapon3BaseStart + i, SeekOrigin.Begin);
-                        reader.Read(test, 0, 4);
-                        readerBuffer = reader.ReadInt32();
-                        DWOfficerDictionary["DWOfficer" + i].weapon3 = new Weapon
-                        {
-                            weaponName = weaponsDict[readerBuffer],
-                            weaponId = readerBuffer,
-                            weaponDamageOffset = reader.ReadInt32(),
-                            weaponElement = weaponElementMap[reader.ReadInt32()],
-                            weaponSkills = reader.ReadInt32()
-                        };
-                        //DWOfficerDictionary["DWOfficer" + i].weapon3.weaponName = weaponsDict[reader.ReadInt32()];
-                        //Console.WriteLine("weapon 3: " + weaponsDict[reader.ReadInt32()]);
-
-                        reader.BaseStream.Seek(weapon4BaseStart + i, SeekOrigin.Begin);
-                        reader.Read(test, 0, 4);
-                        readerBuffer = reader.ReadInt32();
-                        DWOfficerDictionary["DWOfficer" + i].weapon4 = new Weapon
-                        {
-                            weaponName = weaponsDict[readerBuffer],
-                            weaponId = readerBuffer,
-                            weaponDamageOffset = reader.ReadInt32(),
-                            weaponElement = weaponElementMap[reader.ReadInt32()],
-                            weaponSkills = reader.ReadInt32()
-                        };
-                        //DWOfficerDictionary["DWOfficer" + i].weapon4.weaponName = weaponsDict[reader.ReadInt32()];
-                        //Console.WriteLine("weapon 4: " + weaponsDict[reader.ReadInt32()]);
-
-                        reader.BaseStream.Seek(weapon5BaseStart + i, SeekOrigin.Begin);
-                        reader.Read(test, 0, 4);
-                        readerBuffer = reader.ReadInt32();
-                        DWOfficerDictionary["DWOfficer" + i].weapon5 = new Weapon
-                        {
-                            weaponName = weaponsDict[readerBuffer],
-                            weaponId = readerBuffer,
-                            weaponDamageOffset = reader.ReadInt32(),
-                            weaponElement = weaponElementMap[reader.ReadInt32()],
-                            weaponSkills = reader.ReadInt32()
-                        };
-                        //DWOfficerDictionary["DWOfficer" + i].weapon5.weaponName = weaponsDict[reader.ReadInt32()];
-                        //Console.WriteLine("weapon 5: " + weaponsDict[reader.ReadInt32()]);
-
-                        reader.BaseStream.Seek(weapon6BaseStart + i, SeekOrigin.Begin);
-                        reader.Read(test, 0, 4);
-                        readerBuffer = reader.ReadInt32();
-                        DWOfficerDictionary["DWOfficer" + i].weapon6 = new Weapon
-                        {
-                            weaponName = weaponsDict[readerBuffer],
-                            weaponId = readerBuffer,
-                            weaponDamageOffset = reader.ReadInt32(),
-                            weaponElement = weaponElementMap[reader.ReadInt32()],
-                            weaponSkills = reader.ReadInt32()
-                        };
-                        //DWOfficerDictionary["DWOfficer" + i].weapon6.weaponName = weaponsDict[reader.ReadInt32()];
-                        //Console.WriteLine("weapon 6: " + weaponsDict[reader.ReadInt32()]);
-
-                        reader.BaseStream.Seek(weapon7BaseStart + i, SeekOrigin.Begin);
-                        reader.Read(test, 0, 4);
-                        readerBuffer = reader.ReadInt32();
-                        DWOfficerDictionary["DWOfficer" + i].weapon7 = new Weapon
-                        {
-                            weaponName = weaponsDict[readerBuffer],
-                            weaponId = readerBuffer,
-                            weaponDamageOffset = reader.ReadInt32(),
-                            weaponElement = weaponElementMap[reader.ReadInt32()],
-                            weaponSkills = reader.ReadInt32()
-                        };
-                        //DWOfficerDictionary["DWOfficer" + i].weapon7.weaponName = weaponsDict[reader.ReadInt32()];
-                        //Console.WriteLine("weapon 7: " + weaponsDict[reader.ReadInt32()]);
-
-                        reader.BaseStream.Seek(weapon8BaseStart + i, SeekOrigin.Begin);
-                        reader.Read(test, 0, 4);
-                        readerBuffer = reader.ReadInt32();
-                        DWOfficerDictionary["DWOfficer" + i].weapon8 = new Weapon
-                        {
-                            weaponName = weaponsDict[readerBuffer],
-                            weaponId = readerBuffer,
-                            weaponDamageOffset = reader.ReadInt32(),
-                            weaponElement = weaponElementMap[reader.ReadInt32()],
-                            weaponSkills = reader.ReadInt32()
-                        };
-                        //DWOfficerDictionary["DWOfficer" + i].weapon8.weaponName = weaponsDict[reader.ReadInt32()];
-                        //Console.WriteLine("weapon 8: " + weaponsDict[reader.ReadInt32()]);
-
-                        string json = JsonConvert.SerializeObject(DWOfficerDictionary["DWOfficer" + i], Formatting.Indented);
-                        Console.WriteLine(json);
-
-                        Console.WriteLine("********* \n\n");
-
-
-                        i = i + 167;
-                        // 168 bytes per officer 
-                        // fyi - save.dat bytes 2904 to 9791
-                        // 6888 / 168 = 41 :)
+                    Console.WriteLine(reader.BaseStream.Seek(emblemAddress, SeekOrigin.Begin));
+                    reader.Read(test, 0, 4);
+                    readerBuffer = reader.ReadInt16();
+                    Console.WriteLine("emblem: " + readerBuffer);
+                    //fighterDictionary["fighter" + i].officerName = officersDict[reader.ReadInt32()];
+                    //DWOfficerDictionary["DWOfficer" + i].officerId = reader.ReadInt32();
 
 
 
-                    }
+                    //string json = JsonConvert.SerializeObject(fighterDictionary["fighter" + i], Formatting.Indented);
+                    //Console.WriteLine(json);
+
+                    //Console.WriteLine("********* \n\n");
+
+
+                    //i = i + 167;
+                    // 168 bytes per officer 
+                    // fyi - save.dat bytes 2904 to 9791
+                    // 6888 / 168 = 41 :)
+
 
                 }
 
@@ -606,14 +293,6 @@ class Program
         while (true) ;
     }
 
-    static string DecodeOfficerId(int id)
-    {
-        if (id == 10)
-            return "Xiahou Dun";
-
-        else
-            return "idk";
-    }
 }
 
    
